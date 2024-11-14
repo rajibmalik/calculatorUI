@@ -6,84 +6,115 @@ class Calculator {
   isOn = false;
 
   constructor() {
+    this.display = document.getElementById("display");
     this.addButtonListeners();
   }
 
   addButtonListeners() {
+    this.addClickListenerForOn();
+    this.addClickListenerForButtons();
     this.addClickListenersForNumbers();
     this.addClickListenersForOperators();
     this.addClickListenerForEquals();
     this.addClickListenerForClear();
   }
 
+  addClickListenerForOn() {
+    const onButton = document.getElementById("on__button");
+    const header = document.getElementsByClassName("display__header")[0];
+
+    onButton.addEventListener("click", () => {
+      if (this.isOn) {
+        this.isOn = false;
+        this.display.textContent = "";
+        header.textContent = "";
+      } else {
+        this.isOn = true;
+
+        header.textContent = "MATH";
+      }
+    });
+  }
+
   addClickListenersForNumbers() {
-    this.display = document.getElementById("display");
-    let numberButtons = document.getElementsByClassName("number");
+    const numberButtons = document.getElementsByClassName("number");
 
     Array.from(numberButtons).forEach((button) => {
       button.addEventListener("click", () => {
-        button.classList.add("clicked__button");
-        setTimeout(() => {
-          button.classList.remove("clicked__button");
-        }, 100);
-      });
-
-      button.addEventListener("click", () => {
-        if (this.operandA == null || this.operator == "") {
-          if (this.operandA == null) {
-            this.operandA = Number(button.textContent);
-            console.log(this.operandA);
+        if (this.isOn) {
+          if (this.operandA == null || this.operator == "") {
+            if (this.operandA == null) {
+              this.operandA = Number(button.textContent);
+              console.log(this.operandA);
+            } else {
+              this.operandA = Number(this.operandA + button.textContent);
+              console.log(this.operandA);
+            }
+            this.display.textContent += button.textContent;
+            console.log("Operand A: " + this.operandA);
           } else {
-            this.operandA = Number(this.operandA + button.textContent);
-            console.log(this.operandA);
-          }
-          this.display.textContent += button.textContent;
-          console.log("Operand A: " + this.operandA);
-        } else {
-          if (this.operandB == null) {
-            this.operandB = Number(button.textContent);
+            if (this.operandB == null) {
+              this.operandB = Number(button.textContent);
+              console.log("Operand B: " + this.operandB);
+            } else {
+              this.operandB = Number(this.operandB + button.textContent);
+            }
+            this.display.textContent = "";
+            this.display.textContent += this.operandB;
             console.log("Operand B: " + this.operandB);
-          } else {
-            this.operandB = Number(this.operandB + button.textContent);
           }
-          this.display.textContent = "";
-          this.display.textContent += this.operandB;
-          console.log("Operand B: " + this.operandB);
+        }
+      });
+    });
+  }
+
+  addClickListenerForButtons() {
+    const buttons = document.getElementsByTagName("button");
+
+    Array.from(buttons).forEach((button) => {
+      button.addEventListener("click", () => {
+        if (this.isOn) {
+          button.classList.add("clicked__button");
+          setTimeout(() => {
+            button.classList.remove("clicked__button");
+          }, 100);
         }
       });
     });
   }
 
   addClickListenersForOperators() {
-    let operatorButtons = document.getElementsByClassName("operator");
+    const operatorButtons = document.getElementsByClassName("operator");
 
     Array.from(operatorButtons).forEach((button) => {
       console.log("OPERATOR: " + this.operator);
       button.addEventListener("click", () => {
-        if (this.operator != "") {
-          this.calculateResult(this.operandA, this.operandB, this.operator);
-        }
-        switch (button.id) {
-          case "divide":
-            this.operator = "/";
-            console.log(this.operator);
-            break;
-          case "multiply":
-            this.operator = "*";
-            console.log(this.operator);
-            break;
-          case "subtract":
-            this.operator = "-";
-            console.log(this.operator);
-            break;
-          case "addition":
-            this.operator = "+";
-            console.log(this.operator);
-            break;
-          case "modulus":
-            this.operator = "%";
-            console.log(this.operator);
-            break;
+        if (this.isOn) {
+          if (this.operator != "") {
+            this.calculateResult(this.operandA, this.operandB, this.operator);
+          }
+          switch (button.id) {
+            case "divide":
+              this.operator = "/";
+              console.log(this.operator);
+              break;
+            case "multiply":
+              this.operator = "*";
+              console.log(this.operator);
+              break;
+            case "subtract":
+              this.operator = "-";
+              console.log(this.operator);
+              break;
+            case "addition":
+              this.operator = "+";
+              console.log(this.operator);
+              break;
+            case "modulus":
+              this.operator = "%";
+              console.log(this.operator);
+              break;
+          }
         }
       });
     });
@@ -91,26 +122,30 @@ class Calculator {
 
   addClickListenerForEquals() {
     this.display = document.getElementById("display");
-    let equals = document.getElementById("equals");
+    const equalsButton = document.getElementById("equals");
 
-    equals.onclick = () => {
-      if (!this.operandA || !this.operandB || !this.operator) {
-        return;
+    equalsButton.onclick = () => {
+      if (this.isOn) {
+        if (!this.operandA || !this.operandB || !this.operator) {
+          return;
+        }
+
+        this.calculateResult(this.operandA, this.operandB, this.operator);
       }
-
-      this.calculateResult(this.operandA, this.operandB, this.operator);
     };
   }
 
   addClickListenerForClear() {
     this.display = document.getElementById("display");
-    let clear = document.getElementById("clear");
+    const clearButton = document.getElementById("clear");
 
-    clear.addEventListener("click", () => {
-      this.display.textContent = "";
-      this.operandA = null;
-      this.operandB = null;
-      this.operator = "";
+    clearButton.addEventListener("click", () => {
+      if (this.isOn) {
+        this.display.textContent = "";
+        this.operandA = null;
+        this.operandB = null;
+        this.operator = "";
+      }
     });
   }
 
@@ -132,7 +167,7 @@ class Calculator {
   }
 
   calculateResult(operandA, operandB, operator) {
-    let result = this.operate(this.operandA, this.operandB, this.operator);
+    const result = this.operate(this.operandA, this.operandB, this.operator);
 
     this.display.textContent = result;
     this.operandA = Number(result);
@@ -155,7 +190,7 @@ class Calculator {
 
   divide(a, b) {
     const MAX_DECIMAL_PLACES = 5;
-    let result = a / b;
+    const result = a / b;
 
     if (
       result.toString().includes(".") &&
