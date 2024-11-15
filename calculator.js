@@ -5,6 +5,17 @@ class Calculator {
   display = null;
   isOn = false;
 
+  static OPERATORS = {
+    ADDITION: "+",
+    SUBTRACT: "-",
+    MULTIPLY: "*",
+    DIVIDE: "/",
+    MODULUS: "%",
+  };
+
+  static MAX_DECIMAL_PLACES = 5;
+  static BUTTON_CLICKED_CLASS = "clicked__button";
+
   constructor() {
     this.display = document.getElementById("display");
     this.addButtonListeners();
@@ -71,9 +82,9 @@ class Calculator {
 
     Array.from(buttons).forEach((button) => {
       button.addEventListener("click", () => {
-        button.classList.add("clicked__button");
+        button.classList.add(Calculator.BUTTON_CLICKED_CLASS);
         setTimeout(() => {
-          button.classList.remove("clicked__button");
+          button.classList.remove(Calculator.BUTTON_CLICKED_CLASS);
         }, 100);
       });
     });
@@ -84,34 +95,26 @@ class Calculator {
 
     Array.from(operatorButtons).forEach((button) => {
       button.addEventListener("click", () => {
-        if (this.isOn) {
-          if (this.operator != "" && this.operandB != null) {
-            this.calculateResult(this.operandA, this.operandB, this.operator);
-          }
-          switch (button.id) {
-            case "divide":
-              this.operator = "/";
-              break;
-            case "multiply":
-              this.operator = "*";
-              break;
-            case "subtract":
-              this.operator = "-";
-              break;
-            case "addition":
-              this.operator = "+";
-              break;
-            case "modulus":
-              this.operator = "%";
-              break;
-          }
+        if (!this.isOn) return;
+
+        if (this.operator != "" && this.operandB != null) {
+          this.calculateResult();
         }
+
+        const operatorMap = {
+          divide: Calculator.OPERATORS.DIVIDE,
+          multiply: Calculator.OPERATORS.MULTIPLY,
+          subtract: Calculator.OPERATORS.SUBTRACT,
+          addition: Calculator.OPERATORS.ADDITION,
+          modulus: Calculator.OPERATORS.MODULUS,
+        };
+
+        this.operator = operatorMap[button.id];
       });
     });
   }
 
   addClickListenerForEquals() {
-    this.display = document.getElementById("display");
     const equalsButton = document.getElementById("equals");
 
     equalsButton.onclick = () => {
@@ -120,13 +123,12 @@ class Calculator {
           return;
         }
 
-        this.calculateResult(this.operandA, this.operandB, this.operator);
+        this.calculateResult();
       }
     };
   }
 
   addClickListenerForClear() {
-    this.display = document.getElementById("display");
     const clearButton = document.getElementById("clear");
 
     clearButton.addEventListener("click", () => {
@@ -195,20 +197,20 @@ class Calculator {
     operandA = parseFloat(operandA);
     operandB = parseFloat(operandB);
     switch (operator) {
-      case "+":
+      case Calculator.OPERATORS.ADDITION:
         return this.add(operandA, operandB);
-      case "-":
+      case Calculator.OPERATORS.SUBTRACT:
         return this.subtract(operandA, operandB);
-      case "*":
+      case Calculator.OPERATORS.MULTIPLY:
         return this.multiply(operandA, operandB);
-      case "/":
+      case Calculator.OPERATORS.DIVIDE:
         return this.divide(operandA, operandB);
-      case "%":
+      case Calculator.OPERATORS.MODULUS:
         return this.modulus(operandA, operandB);
     }
   }
 
-  calculateResult(operandA, operandB, operator) {
+  calculateResult() {
     const result = this.operate(this.operandA, this.operandB, this.operator);
 
     this.display.textContent = result;
@@ -230,14 +232,17 @@ class Calculator {
   }
 
   divide(a, b) {
-    const MAX_DECIMAL_PLACES = 5;
     const result = a / b;
+
+    if (b == 0) {
+      return "Error";
+    }
 
     if (
       result.toString().includes(".") &&
-      result.toString().split(".")[1].length > MAX_DECIMAL_PLACES
+      result.toString().split(".")[1].length > Calculator.MAX_DECIMAL_PLACES
     ) {
-      result = result.toFixed(MAX_DECIMAL_PLACES);
+      result = result.toFixed(Calculator.MAX_DECIMAL_PLACES);
     }
 
     return result;
@@ -249,4 +254,3 @@ class Calculator {
 }
 
 calculator = new Calculator();
-console.log(calculator.operate(1, 2, "+"));
