@@ -13,7 +13,7 @@
 }
 
 .display__container {
-  width: 100%;
+  width: 95%;
   height: 15vh;
   display: flex;
   flex-direction: column;
@@ -25,6 +25,10 @@
   background-color: lightgrey;
   border-radius: 10px;
   border: solid black 3px;
+  margin-bottom: 15px;
+  margin-top: 40px;
+  margin-left: 30px;
+  margin-right: 30px;
 }
 
 .row {
@@ -39,7 +43,7 @@
 button {
   width: 100px;
   height: 85px;
-  border-radius: 5px;
+  border-radius: 20px 20px 25px 25px;
   font-size: 25px;
 }
 
@@ -59,8 +63,10 @@ button {
 #on__button {
   height: 80px;
   width: 90px;
-  background-color: red;
+  background-color: rgb(43, 70, 182);
   border-radius: 40px;
+  border: 0px;
+  margin-bottom: 10px;
 }
 
 .display__container__header {
@@ -78,5 +84,6 @@ button {
 
 .display {
   flex: 1;
-  margin-top: 40px;
+  margin-top: 30px;
+  font-size: 25px;
 }

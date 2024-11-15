@@ -17,6 +17,7 @@ class Calculator {
     this.addClickListenersForOperators();
     this.addClickListenerForEquals();
     this.addClickListenerForClear();
+    this.addClickListenerForNegativeNumber();
   }
 
   addClickListenerForOn() {
@@ -30,7 +31,6 @@ class Calculator {
         header.textContent = "";
       } else {
         this.isOn = true;
-
         header.textContent = "MATH";
       }
     });
@@ -41,28 +41,22 @@ class Calculator {
 
     Array.from(numberButtons).forEach((button) => {
       button.addEventListener("click", () => {
-        if (this.isOn) {
-          if (this.operandA == null || this.operator == "") {
-            if (this.operandA == null) {
-              this.operandA = Number(button.textContent);
-              console.log(this.operandA);
-            } else {
-              this.operandA = Number(this.operandA + button.textContent);
-              console.log(this.operandA);
-            }
-            this.display.textContent += button.textContent;
-            console.log("Operand A: " + this.operandA);
-          } else {
-            if (this.operandB == null) {
-              this.operandB = Number(button.textContent);
-              console.log("Operand B: " + this.operandB);
-            } else {
-              this.operandB = Number(this.operandB + button.textContent);
-            }
+        if (!this.isOn) {
+          return;
+        }
+
+        if (this.operator == "") {
+          this.display.textContent += button.textContent;
+          this.operandA = this.display.textContent;
+          console.log(`Operand A ${this.operandA}`);
+        } else {
+          if (this.operandB == null) {
             this.display.textContent = "";
-            this.display.textContent += this.operandB;
-            console.log("Operand B: " + this.operandB);
           }
+          this.display.textContent += button.textContent;
+          this.operandB = this.display.textContent;
+
+          console.log(`Operand B ${this.operandB}`);
         }
       });
     });
@@ -73,12 +67,10 @@ class Calculator {
 
     Array.from(buttons).forEach((button) => {
       button.addEventListener("click", () => {
-        if (this.isOn) {
-          button.classList.add("clicked__button");
-          setTimeout(() => {
-            button.classList.remove("clicked__button");
-          }, 100);
-        }
+        button.classList.add("clicked__button");
+        setTimeout(() => {
+          button.classList.remove("clicked__button");
+        }, 100);
       });
     });
   }
@@ -90,7 +82,9 @@ class Calculator {
       console.log("OPERATOR: " + this.operator);
       button.addEventListener("click", () => {
         if (this.isOn) {
-          if (this.operator != "") {
+          if (this.operator != "" && this.operandB != null) {
+            console.log("OPERAND A:" + this.operandA);
+            console.log("OPERAND B:" + this.operandB);
             this.calculateResult(this.operandA, this.operandB, this.operator);
           }
           switch (button.id) {
@@ -145,6 +139,32 @@ class Calculator {
         this.operandA = null;
         this.operandB = null;
         this.operator = "";
+      }
+    });
+  }
+
+  addClickListenerForNegativeNumber() {
+    const negativeButton = document.getElementById("negative__number");
+
+    const toggleNegative = () => {
+      if (this.operandA != null && this.operator == "") {
+        this.operandA = this.operandA * -1;
+        console.log(`Operand A: ${this.operandA}`);
+      } else {
+        this.operandB = this.operandB * -1;
+        console.log(`Operand B: ${this.operandB}`);
+      }
+    };
+
+    negativeButton.addEventListener("click", () => {
+      if (this.display.textContent != "") {
+        if (this.display.textContent.includes("-")) {
+          this.display.textContent = this.display.textContent.replace("-", "");
+          toggleNegative();
+        } else {
+          this.display.textContent = "-" + this.display.textContent;
+          toggleNegative();
+        }
       }
     });
   }
