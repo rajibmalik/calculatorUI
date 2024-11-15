@@ -18,6 +18,7 @@ class Calculator {
     this.addClickListenerForEquals();
     this.addClickListenerForClear();
     this.addClickListenerForNegativeNumber();
+    this.addClickListenerForDecimal();
   }
 
   addClickListenerForOn() {
@@ -46,17 +47,20 @@ class Calculator {
         }
 
         if (this.operator == "") {
-          this.display.textContent += button.textContent;
-          this.operandA = this.display.textContent;
-          console.log(`Operand A ${this.operandA}`);
+          if (this.operandA == null) {
+            this.operandA = button.textContent;
+          } else {
+            this.operandA += button.textContent;
+          }
+          this.display.textContent = this.operandA;
         } else {
           if (this.operandB == null) {
             this.display.textContent = "";
+            this.operandB = button.textContent;
+          } else {
+            this.operandB += button.textContent;
           }
-          this.display.textContent += button.textContent;
-          this.operandB = this.display.textContent;
-
-          console.log(`Operand B ${this.operandB}`);
+          this.display.textContent = this.operandB;
         }
       });
     });
@@ -79,34 +83,26 @@ class Calculator {
     const operatorButtons = document.getElementsByClassName("operator");
 
     Array.from(operatorButtons).forEach((button) => {
-      console.log("OPERATOR: " + this.operator);
       button.addEventListener("click", () => {
         if (this.isOn) {
           if (this.operator != "" && this.operandB != null) {
-            console.log("OPERAND A:" + this.operandA);
-            console.log("OPERAND B:" + this.operandB);
             this.calculateResult(this.operandA, this.operandB, this.operator);
           }
           switch (button.id) {
             case "divide":
               this.operator = "/";
-              console.log(this.operator);
               break;
             case "multiply":
               this.operator = "*";
-              console.log(this.operator);
               break;
             case "subtract":
               this.operator = "-";
-              console.log(this.operator);
               break;
             case "addition":
               this.operator = "+";
-              console.log(this.operator);
               break;
             case "modulus":
               this.operator = "%";
-              console.log(this.operator);
               break;
           }
         }
@@ -149,10 +145,8 @@ class Calculator {
     const toggleNegative = () => {
       if (this.operandA != null && this.operator == "") {
         this.operandA = this.operandA * -1;
-        console.log(`Operand A: ${this.operandA}`);
       } else {
         this.operandB = this.operandB * -1;
-        console.log(`Operand B: ${this.operandB}`);
       }
     };
 
@@ -166,6 +160,34 @@ class Calculator {
           toggleNegative();
         }
       }
+    });
+  }
+
+  addClickListenerForDecimal() {
+    const decimalButton = document.querySelector("#decimal");
+
+    const toggleDecimal = (operand) => {
+      if (!operand) operand = "";
+      if (operand.includes(".")) {
+        operand = operand.toString().replace(".", "");
+      } else {
+        operand += ".";
+      }
+      return operand;
+    };
+
+    const toggleOperandWithDecimal = () => {
+      if (this.operandA != null && this.operator == "") {
+        this.operandA = toggleDecimal(this.operandA);
+        this.display.textContent = this.operandA;
+      } else if (this.operandB != null) {
+        this.operandB = toggleDecimal(this.operandB);
+        this.display.textContent = this.operandB;
+      }
+    };
+
+    decimalButton.addEventListener("click", () => {
+      toggleOperandWithDecimal();
     });
   }
 
@@ -193,7 +215,6 @@ class Calculator {
     this.operandA = Number(result);
     this.operandB = null;
     this.operator = "";
-    console.log(`Result ${this.operandA}`);
   }
 
   add(a, b) {
