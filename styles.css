@@ -1,3 +1,7 @@
+body {
+  overflow: hidden;
+}
+
 .calculator__container {
   display: flex;
   flex-direction: column;
@@ -5,16 +9,16 @@
   align-items: center;
   border: solid black;
   width: fit-content;
-  margin: 0 auto;
+  height: fit-content;
+  margin: 20px auto;
   padding: 20px;
-  margin-top: 20%;
   background-color: darkblue;
   border-radius: 25px 25px 25px 35px;
 }
 
 .display__container {
   width: 95%;
-  height: 15vh;
+  height: 12vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -45,6 +49,7 @@ button {
   height: 85px;
   border-radius: 20px 20px 25px 25px;
   font-size: 25px;
+  border: 2px solid black;
 }
 
 .clicked__button {
@@ -89,12 +94,12 @@ button {
 }
 
 #on__button {
-  height: 80px;
-  width: 90px;
+  height: 75px;
+  width: 80px;
   background-color: whitesmoke;
   border-radius: 40px;
   border: 0px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .display__container__header {
